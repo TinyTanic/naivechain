@@ -108,7 +108,7 @@ var initHttpServer = () => {
         connectToPeers([req.body.peer]);
         res.send();
     });
-    app.listen(http_port, () => console.log('Listening http on port: ' + http_port));
+    app.listen(http_port, '0.0.0.0', () => console.log('Listening http on port: ' + http_port));
 };
 // END HTTP SERVER
 
@@ -124,7 +124,7 @@ var MessageType = {
 };
 
 var initP2PServer = () => {
-    var server = new WebSocket.Server({port: p2p_port});
+    var server = new WebSocket.Server({host: '0.0.0.0', port: p2p_port});
     server.on('connection', ws => initConnection(ws));
     console.log('listening websocket p2p port on: ' + p2p_port);
 };
