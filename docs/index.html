@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Blockchain, da zero al codice</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/turnintocoders.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Blockchain,<br>da zero al codice</h1>
+					<p>Programmiamo insieme una blockchain da zero.</p>
+					<p>Il modo migliore per capire qualcosa è rifarlo.</p>
+					<br>
+					<p>by Matteo Giaccone &amp; Edoardo Tenani</p>
+				</section>
+
+				<section>
+					<h2>Cos'è una blockchain?</h2>
+					<p>
+						È un database codiviso, aperto, in cui chiunque può
+						aggiungere informazioni (blocchi), ma non cambiare
+						quelle esistenti.
+					</p>
+					<p>
+						Questo database è distribuito tramite una rete peer-to-peer
+						che condivide un protocollo per aggiungere blocchi, in modo
+						che non sia possibile contraffare i dati inseriti.
+					</p>
+				</section>
+
+				<section>
+					<h2>Blocco</h2>
+					<p>
+						Un blocco è composto da:
+					</p>
+					<ul>
+						<li>index</li>
+						<li>previousBlockHash</li>
+						<li>nonce</li>
+						<li>timestamp</li>
+						<li>data</li>
+						<li>hash</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Hash</h2>
+					<p>
+						È un'impronta digitale di un insieme di dati, risultato
+						di un'operazione matematica con alcune caratteristiche
+						interessanti:
+					</p>
+					<ul>
+						<li>ha lunghezza fissa</li>
+						<li>anche se i dati cambiano poco l'hash cambia molto</li>
+						<li>molto veloce da calcolare anche per moltissime informazioni</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Nuovo blocco</h2>
+					<p>Per generare un nuovo blocco:</p>
+					<ul>
+						<li>incremento l'indice dell'ultimo blocco</li>
+						<li>imposto la data</li>
+						<li>inserisco i dati</li>
+						<li>"mino" l'hash del blocco <b>usando l'hash del blocco precedente</b></li>
+					</ul>
+					<p>
+						Il blocco viene così aggiunto alla lista dei blocchi e mandato
+						a tutti i partecipanti alla rete peer-to-peer
+					</p>
+				</section>
+
+				<section>
+					<h2>Mining</h2>
+					<p>
+						Perché un blocco sia valido e possa venire aggiunto alla catena
+						l'hash deve soddisfare una regola condivisa.
+					</p>
+					<p>Nel nostro caso la regola è che l'hash inizi con '0000'.</p>
+					<p>
+						Per cambiare l'hash l'unico valore che posso cambiare è il <b>nonce</b>.
+						Un numero che progressivamente incremento e che mi permette di
+						cambiare l'hash del blocco finché non soddisfo la regola.
+					</p>
+				</section>
+
+				<section>
+					<h2>Rete peer-to-peer</h2>
+
+					<p>Chi partecipa a questa rete condivide la blockchain.</p>
+					<p>
+						Nel nostro caso la rete è formata da tanti peer che si parlano
+						tramite websocket.
+					</p>
+					<p>
+						I partecipanti ogni volta che aggiungono un blocco lo mandano
+						agli altri peer. Se un peer si collega richiede l'intera blockchain.
+					</p>
+				</section>
+
+				<section>
+					<h2>Interfaccia HTTP</h2>
+
+					<p>È quello che useremo per parlare al nostro software.</p>
+
+					<p>Possiamo:</p>
+					<ul>
+						<li>aggiungere un peer alla rete</li>
+						<li>vedere la lista di peer connessi</li>
+						<li>minare un blocco</li>
+						<li>vedere la lista di blocchi</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Live coding</h2>
+
+					<p>HA!</p>
+					<p>Sorry :-P</p>
+				</section>
+
+				<section>
+					<p>shameless self promotion</p>
+
+					<h1 class="title-background">Turn<br>into<br>Coders</h1>
+
+					<p>Web developer bootcamp</p>
+				</section>
+			</div>
+		</div>
+
+		<script src="js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+			Reveal.initialize();
+		</script>
+	</body>
+</html>
