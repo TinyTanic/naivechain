@@ -6,31 +6,47 @@ var WebSocket = require('ws');
 
 // BLOCKCHAIN
 class Block {
-    constructor(index, previousHash, timestamp, data, hash) {
+    constructor(index, previousBlockHash, nonce, timestamp, data, hash) {
         this.index = index;
-        this.previousHash = previousHash.toString();
+        this.previousBlockHash = previousBlockHash.toString();
+        this.nonce = nonce;
         this.timestamp = timestamp;
         this.data = data;
         this.hash = hash.toString();
     }
 }
 
+var calculateHash = (index, previousBlockHash, nonce, timestamp, data) => {
+    return CryptoJS.SHA256(index + previousBlockHash + nonce + timestamp + data).toString();
+};
+
+var mineBlock = (index, previousBlockHash, timestamp, data) => {
+    var pattern = '0000';
+    var difficulty = pattern.split('').length;
+    var maxNonce = 1000000; // one million, to avoid waiting too much
+    var nonce = 0;
+    var hash = '';
+    while(nonce < maxNonce) {
+        hash = calculateHash(index, previousBlockHash, nonce, timestamp, data);
+        if(hash.substr(0,difficulty) == pattern) {
+            break;
+        }
+        nonce++;
+    }
+    return new Block(index, previousBlockHash, nonce, timestamp, data, hash);
+};
+
 var generateGenesisBlock = () => {
-    return new Block(0, '0', 1465154705, 'my genesis block!!', '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7');
+    return mineBlock(0, '0', 1465154705000, 'my genesis block!!');
 };
 
 var blockchain = [generateGenesisBlock()];
-
-var calculateHash = (index, previousHash, timestamp, data) => {
-    return CryptoJS.SHA256(index + previousHash + timestamp + data).toString();
-};
 
 var generateNextBlock = (blockData) => {
     var previousBlock = getLatestBlock();
     var nextIndex = previousBlock.index + 1;
     var nextTimestamp = new Date().getTime() / 1000;
-    var nextHash = calculateHash(nextIndex, previousBlock.hash, nextTimestamp, blockData);
-    return new Block(nextIndex, previousBlock.hash, nextTimestamp, blockData, nextHash);
+    return mineBlock(nextIndex, previousBlock.hash, nextTimestamp, blockData);
 };
 
 var getLatestBlock = () => blockchain[blockchain.length - 1];
@@ -45,7 +61,7 @@ var isValidNewBlock = (newBlock, previousBlock) => {
     if (previousBlock.index + 1 !== newBlock.index) {
         console.log('invalid index');
         return false;
-    } else if (previousBlock.hash !== newBlock.previousHash) {
+    } else if (previousBlock.hash !== newBlock.previousBlockHash) {
         console.log('invalid previoushash');
         return false;
     } else if (calculateHashForBlock(newBlock) !== newBlock.hash) {
@@ -57,7 +73,7 @@ var isValidNewBlock = (newBlock, previousBlock) => {
 };
 
 var calculateHashForBlock = (block) => {
-    return calculateHash(block.index, block.previousHash, block.timestamp, block.data);
+    return calculateHash(block.index, block.previousBlockHash, block.nonce, block.timestamp, block.data);
 };
 
 var replaceChain = (newBlocks) => {
@@ -95,6 +111,7 @@ var initHttpServer = () => {
 
     app.get('/blocks', (req, res) => res.send(JSON.stringify(blockchain)));
     app.post('/mineBlock', (req, res) => {
+        console.log('Started mining a new block')
         var newBlock = generateNextBlock(req.body.data);
         addBlock(newBlock);
         broadcast(responseLatestMsg());
@@ -174,12 +191,13 @@ var connectToPeers = (newPeers) => {
 };
 
 var handleBlockchainResponse = (message) => {
-    var receivedBlocks = JSON.parse(message.data).sort((b1, b2) => (b1.index - b2.index));
+    var receivedBlocks = JSON.parse(message.data);
     var latestBlockReceived = receivedBlocks[receivedBlocks.length - 1];
     var latestBlockHeld = getLatestBlock();
     if (latestBlockReceived.index > latestBlockHeld.index) {
-        console.log('blockchain possibly behind. We got: ' + latestBlockHeld.index + ' Peer got: ' + latestBlockReceived.index);
-        if (latestBlockHeld.hash === latestBlockReceived.previousHash) {
+        console.log('blockchain possibly behind. We got: ' + latestBlockHeld.index + ' Peer got: ' +
+            latestBlockReceived.index);
+        if (latestBlockHeld.hash === latestBlockReceived.previousBlockHash) {
             console.log('We can append the received block to our chain');
             blockchain.push(latestBlockReceived);
             broadcast(responseLatestMsg());
