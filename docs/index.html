@@ -8,105 +8,126 @@
 
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/turnintocoders.css">
+
+		<style type="text/css">
+			.grey-out {
+				opacity: 0.2;
+			}
+		</style>
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>
+				<section id="welcome">
 					<h1>Blockchain,<br>da zero al codice</h1>
 					<p>Programmiamo insieme una blockchain da zero.</p>
 					<p>Il modo migliore per capire qualcosa è rifarlo.</p>
 					<br>
-					<p>by Matteo Giaccone &amp; Edoardo Tenani</p>
+					<p>by <a href="https://github.com/matjack1">Matteo Giaccone</a> &amp; <a href="https://github.com/endorama/">Edoardo Tenani</a></p>
 				</section>
 
-				<section>
+				<section id="blockchain">
 					<h2>Cos'è una blockchain?</h2>
 					<p>
-						È un database codiviso, aperto, in cui chiunque può
-						aggiungere informazioni (blocchi), ma non cambiare
+						È un database <b>condiviso</b>, <b>aperto</b>, in cui chiunque può
+						aggiungere informazioni (<b>blocchi</b>), ma non cambiare
 						quelle esistenti.
 					</p>
-					<p>
-						Questo database è distribuito tramite una rete peer-to-peer
+					<p class="fragment fade-down">
+						Questo database è <b>distribuito</b> tramite una rete <b>peer-to-peer</b>
 						che condivide un protocollo per aggiungere blocchi, in modo
 						che non sia possibile contraffare i dati inseriti.
 					</p>
 				</section>
 
-				<section>
+				<section id="block">
 					<h2>Blocco</h2>
 					<p>
 						Un blocco è composto da:
 					</p>
 					<ul>
-						<li>index</li>
-						<li>previousBlockHash</li>
-						<li>nonce</li>
-						<li>timestamp</li>
-						<li>data</li>
-						<li>hash</li>
+						<li>index <span class="grey-out">(numero)</span></li>
+						<li class="fragment fade-down">previousBlockHash <span class="grey-out">(hash)</span></li>
+						<li class="fragment fade-down">nonce <span class="grey-out">(numero)</span></li>
+						<li class="fragment fade-down">timestamp <span class="grey-out">(numero)</span></li>
+						<li class="fragment fade-down">data <span class="grey-out">(arbitrary data)</span></li>
+						<li class="fragment fade-down">hash <span class="grey-out">(hash)</span></li>
 					</ul>
 				</section>
 
-				<section>
+				<section id="hash">
 					<h2>Hash</h2>
 					<p>
-						È un'impronta digitale di un insieme di dati, risultato
+						È un'<b>impronta digitale</b> di un insieme di dati, risultato
 						di un'operazione matematica con alcune caratteristiche
 						interessanti:
 					</p>
 					<ul>
-						<li>ha lunghezza fissa</li>
-						<li>anche se i dati cambiano poco l'hash cambia molto</li>
-						<li>molto veloce da calcolare anche per moltissime informazioni</li>
+						<li class="fragment fade-down">ha lunghezza fissa</li>
+						<li class="fragment fade-down">anche se i dati cambiano poco l'hash cambia molto</li>
+						<li class="fragment fade-down">molto veloce da calcolare anche per moltissime informazioni</li>
 					</ul>
 				</section>
 
-				<section>
+				<section id="new-block">
 					<h2>Nuovo blocco</h2>
 					<p>Per generare un nuovo blocco:</p>
 					<ul>
-						<li>incremento l'indice dell'ultimo blocco</li>
-						<li>imposto la data</li>
-						<li>inserisco i dati</li>
-						<li>"mino" l'hash del blocco <b>usando l'hash del blocco precedente</b></li>
+						<li class="fragment fade-down">incremento l'indice dell'ultimo blocco</li>
+						<li class="fragment fade-down">imposto il timestamp</li>
+						<li class="fragment fade-down">inserisco i dati</li>
+						<li class="fragment fade-down">"mino" l'hash del blocco <b>usando l'hash del blocco precedente</b></li>
 					</ul>
-					<p>
+					<p class="fragment">
 						Il blocco viene così aggiunto alla lista dei blocchi e mandato
-						a tutti i partecipanti alla rete peer-to-peer
+						a tutti i partecipanti alla rete peer-to-peer.
 					</p>
 				</section>
 
-				<section>
+				<section id="mining">
 					<h2>Mining</h2>
 					<p>
-						Perché un blocco sia valido e possa venire aggiunto alla catena
-						l'hash deve soddisfare una regola condivisa.
+						Perché un <b>blocco</b> sia <b>valido</b> il suo hash deve soddisfare
+						una regola condivisa.
 					</p>
-					<p>Nel nostro caso la regola è che l'hash inizi con '0000'.</p>
 					<p>
-						Per cambiare l'hash l'unico valore che posso cambiare è il <b>nonce</b>.
-						Un numero che progressivamente incremento e che mi permette di
-						cambiare l'hash del blocco finché non soddisfo la regola.
+						Per aggiungere un blocco alla catena, questo <b>deve</b> essere valido.
+					</p>
+					<p class="fragment fade-down">
+						Nel nostro caso la regola è che l'hash inizi con <b>0000</b>.
 					</p>
 				</section>
 
-				<section>
+				<section id="mining2">
+					<h2>Mining</h2>
+					<p>
+						Per cambiare l'hash l'unico valore che posso cambiare è il <b>nonce</b>:
+					</p>
+					<p>
+						è un numero che progressivamente incremento per cambiare l'hash del
+						blocco finché non soddisfo la regola.
+					</p>
+				</section>
+
+				<section id="peer-to-peer">
 					<h2>Rete peer-to-peer</h2>
 
-					<p>Chi partecipa a questa rete condivide la blockchain.</p>
 					<p>
-						Nel nostro caso la rete è formata da tanti peer che si parlano
-						tramite websocket.
+						Chi partecipa a questa rete condivide la blockchain.
+					</p>
+					<p>
+						I peer della nostra rete si parlano tramite websocket.
 					</p>
 					<p>
 						I partecipanti ogni volta che aggiungono un blocco lo mandano
-						agli altri peer. Se un peer si collega richiede l'intera blockchain.
+						agli altri peer.
+					</p>
+					<p>
+						Se un peer si collega richiede l'intera blockchain.
 					</p>
 				</section>
 
-				<section>
+				<section id="http">
 					<h2>Interfaccia HTTP</h2>
 
 					<p>È quello che useremo per parlare al nostro software.</p>
@@ -120,19 +141,21 @@
 					</ul>
 				</section>
 
-				<section>
+				<section id="live-coding">
 					<h2>Live coding</h2>
 
 					<p>HA!</p>
 					<p>Sorry :-P</p>
 				</section>
 
-				<section>
+				<section id="turnintocoders">
 					<p>shameless self promotion</p>
 
 					<h1 class="title-background">Turn<br>into<br>Coders</h1>
 
-					<p>Web developer bootcamp</p>
+					<p>
+						<a href="http://turnintocoders.it/it/">Web developer bootcamp</a>
+					</p>
 				</section>
 			</div>
 		</div>
@@ -141,7 +164,11 @@
 		<script src="js/reveal.min.js"></script>
 
 		<script>
-			Reveal.initialize();
+			Reveal.initialize({
+				slideNumber: true,
+				slideNumber: 'c/t',
+				history: true
+			});
 		</script>
 	</body>
 </html>
